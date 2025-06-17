@@ -1,0 +1,7 @@
+@import './publish/pages/home/home.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+

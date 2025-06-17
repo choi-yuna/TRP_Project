@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <script type="module" src="./home.js"></script>
+</head>
+<body class="flex h-screen">
+
+  <!-- 좌측 메뉴바 -->
+  <aside class="bg-[#1C1A4E] text-white w-64 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center gap-2 p-4">
+        <img src="/src/assets/logo.png"  class="w-8 h-8" />
+        <span class="font-semibold text-3xl">TRP</span>
+      </div>
+      <nav class="mt-4">
+        <ul>
+          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span>📅</span> <span>일정</span>
+            </div>
+            <span>▼</span>
+          </li>
+          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span>📢</span> <span>공지사항</span>
+            </div>
+            <span>▼</span>
+          </li>
+          <!-- 나머지 메뉴 동일한 구조 -->
+          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span>🚚</span> <span>배차관리</span>
+            </div>
+            <span>▼</span>
+          </li>
+          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span>👥</span> <span>인사관리</span>
+            </div>
+            <span>▼</span>
+          </li>
+          <!-- 추가 메뉴 생략 -->
+        </ul>
+      </nav>
+    </div>
+    <div class="p-4">
+      <button class="block w-full text-left mb-2">📝 메뉴얼</button>
+      <button class="block w-full text-left">❓ FAQ</button>
+    </div>
+  </aside>
+
+  <!-- 메인 컨텐츠 -->
+  <main class="flex-1 flex flex-col">
+    <!-- 상단 헤더 -->
+    <header class="bg-white p-4 border-b flex justify-between">
+      <div class="font-bold text-xl">근태관리</div>
+      <div class="flex items-center gap-3">
+        <div>이도울 님</div>
+        <span>▼</span>  
+      </div>
+      
+    </header>
+    <div class="bg-white p-4 border-b flex justify-between items-center">
+      <div class="flex items-center gap-8">
+        <button class="text-xl">&lt;</button>
+        <button class="text-xl">&gt;</button>
+        <span class="font-semibold text-xl text-[#1F2022]">2025.03.3주</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <select class="border rounded p-2">
+          <option>승무원</option>
+          <option>옵션 2</option>
+        </select>
+        <button class="bg-[#474B5D] text-white px-3 py-2 rounded-xl text-sm">오늘</button>
+        <button class="bg-[#474B5D]  text-white px-3 py-2 rounded-xl text-sm">일별</button>
+        <button class="bg-[#4A69E4]  text-white px-3 py-2 rounded-xl text-sm ">주별</button>
+      </div>
+    </div>
+
+    <!-- 표 -->
+    <section class="overflow-auto flex-1 p-2">
+        <table id="scheduleTable" class="table-fixed w-full border-collapse border text-center">
+            <thead>
+              <tr id="weekdayRow"></tr> <!-- 월화수목금토일 + 날짜 -->
+              <tr id="hourRow"></tr>    <!-- 이름 + 0~24 -->
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+          
+          
+        <table class="w-full border-collapse border table-fixed">
+          <thead>
+            <tr class="text-sm">
+              <!-- JS로 동적 생성 -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!-- 시간별 칸 -->
+              <!-- JS로 막대그래프 삽입 -->
+            </tr>
+          </tbody>
+        </table>
+      </section>
+  </main>
+
+</body>
+</html>
