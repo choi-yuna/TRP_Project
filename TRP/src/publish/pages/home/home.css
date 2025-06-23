@@ -1,4 +1,71 @@
-.section-title {
-    color: red;
-  }
-  
+/* 달력 버튼 */
+#calendarToggleBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* 달력 팝업 스타일 */
+.calendar-popup {
+  position: absolute;
+  top: 40px; /* 적당히 조정 */
+  left: 0;
+  width: 280px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  padding: 10px;
+  z-index: 100;
+  display: none;
+  font-size: 14px;
+}
+
+/* 요일, 날짜 행 */
+.calendar-popup .weekdays,
+.calendar-popup .dates {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.calendar-popup .weekdays div,
+.calendar-popup .dates div {
+  width: 30px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 날짜 선택 시 디자인 */
+.calendar-popup .dates div.selected {
+  color: #4a69e4;
+  border-radius: 50%;
+}
+.selected-day .date-num {
+  color: #4a69e4;
+}
+.selected-day {
+  border-bottom: 3px solid #4A69E4;
+}
+.date-num {
+  transition: background-color 0.2s;
+}
+.date-num {
+  border-radius: 9999px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+th:hover .date-num {
+  background-color: #E0E7FF; /* 연한 파랑 */
+}
+
+.selected-day .date-num {
+  background-color: #4A69E4;
+  color: white;
+}
+
+.selected-day {
+  border-bottom: 3px solid #4A69E4;
+}

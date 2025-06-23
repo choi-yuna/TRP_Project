@@ -4,51 +4,25 @@
   <meta charset="UTF-8" />
   <title>Home</title>
   <link rel="stylesheet" href="/src/style.css" />
-  <script type="module" src="./home.js"></script>
+  <link rel="stylesheet" href="/src/home.css" />
+  <script type="module" src="./home.js" defer></script>
 </head>
 <body class="flex h-screen">
 
   <!-- 좌측 메뉴바 -->
-  <aside class="bg-[#1C1A4E] text-white w-64 flex flex-col justify-between">
+  <aside id="sidebar" class="bg-[#1C1A4E] text-white w-64 flex flex-col justify-between">
     <div>
-      <div class="flex items-center gap-2 p-4">
-        <img src="/src/assets/logo.png"  class="w-8 h-8" />
+      <div class="flex items-center justify-center gap-2 p-4">
+        <img src="../../../assets/attendanceManagement/TRPLogo.png" alt="TRP" class="w-6 h-6" />
         <span class="font-semibold text-3xl">TRP</span>
       </div>
       <nav class="mt-4">
-        <ul>
-          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
-            <div class="flex items-center gap-2">
-              <span>📅</span> <span>일정</span>
-            </div>
-            <span>▼</span>
-          </li>
-          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
-            <div class="flex items-center gap-2">
-              <span>📢</span> <span>공지사항</span>
-            </div>
-            <span>▼</span>
-          </li>
-          <!-- 나머지 메뉴 동일한 구조 -->
-          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
-            <div class="flex items-center gap-2">
-              <span>🚚</span> <span>배차관리</span>
-            </div>
-            <span>▼</span>
-          </li>
-          <li class="flex justify-between items-center px-4 py-2 hover:bg-blue-800 cursor-pointer">
-            <div class="flex items-center gap-2">
-              <span>👥</span> <span>인사관리</span>
-            </div>
-            <span>▼</span>
-          </li>
-          <!-- 추가 메뉴 생략 -->
-        </ul>
+        <ul id="sidebar-menu"></ul>
       </nav>
     </div>
     <div class="p-4">
-      <button class="block w-full text-left mb-2">📝 메뉴얼</button>
-      <button class="block w-full text-left">❓ FAQ</button>
+      <button class="block w-full  items-center mb-2 border border-white rounded p-1">메뉴얼</button>
+      <button class="block w-full items-center border border-white rounded p-1">FAQ</button>
     </div>
   </aside>
 
@@ -61,20 +35,24 @@
         <div>이도울 님</div>
         <span>▼</span>  
       </div>
-      
     </header>
     <div class="bg-white p-4 border-b flex justify-between items-center">
-      <div class="flex items-center gap-8">
-        <button class="text-xl">&lt;</button>
-        <button class="text-xl">&gt;</button>
-        <span class="font-semibold text-xl text-[#1F2022]">2025.03.3주</span>
+      <div class="flex items-center gap-2 relative">
+        <button id="prevWeek" class="text-xl">&lt;</button>
+        <button id="nextWeek" class="text-xl">&gt;</button>
+        <span id="currentWeek" class="font-semibold text-xl text-[#1F2022]">2025.03.3주</span>
+        <button id="calendarToggleBtn" class="ml-2">
+          <img src="../../../assets/attendanceManagement/calendar-icon.png" alt="달력 아이콘" class="w-5 h-5" />
+        </button>
       </div>
+      
       <div class="flex items-center gap-3">
         <select class="border rounded p-2">
           <option>승무원</option>
-          <option>옵션 2</option>
+          <option>차량</option>
+          <option>노선</option>
         </select>
-        <button class="bg-[#474B5D] text-white px-3 py-2 rounded-xl text-sm">오늘</button>
+        <button id="btnToday" class="bg-[#474B5D] text-white px-3 py-2 rounded-xl text-sm">오늘</button>
         <button class="bg-[#474B5D]  text-white px-3 py-2 rounded-xl text-sm">일별</button>
         <button class="bg-[#4A69E4]  text-white px-3 py-2 rounded-xl text-sm ">주별</button>
       </div>
@@ -82,29 +60,25 @@
 
     <!-- 표 -->
     <section class="overflow-auto flex-1 p-2">
-        <table id="scheduleTable" class="table-fixed w-full border-collapse border text-center">
-            <thead>
-              <tr id="weekdayRow"></tr> <!-- 월화수목금토일 + 날짜 -->
-              <tr id="hourRow"></tr>    <!-- 이름 + 0~24 -->
-            </thead>
-            <tbody id="scheduleBody"></tbody>
-          </table>
-          
-          
-        <table class="w-full border-collapse border table-fixed">
+      <div class="w-full">
+        <table id="weekdayTable" class="w-full table-fixed border-collapse mb-2">
           <thead>
-            <tr class="text-sm">
-              <!-- JS로 동적 생성 -->
-            </tr>
+            <tr id="weekdayRow"></tr>
           </thead>
-          <tbody>
-            <tr>
-              <!-- 시간별 칸 -->
-              <!-- JS로 막대그래프 삽입 -->
-            </tr>
-          </tbody>
         </table>
-      </section>
+      
+        <table id="scheduleTable" class="w-full table-fixed border-collapse">
+          <thead>
+            <tr id="hourRow"></tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+      
+    </section>
+
+    <!-- 달력 팝업 -->
+    <div id="calendarPopup" class="calendar-popup"></div>
   </main>
 
 </body>
