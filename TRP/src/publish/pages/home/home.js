@@ -10,12 +10,13 @@ hourRow.innerHTML = '';
 
 // 이름 칸
 const nameTh = document.createElement('th');
-nameTh.className = 'border w-24 bg-[#f0f0f0] ';
+nameTh.className = 'border w-24 bg-[#f0f0f0] text-gray-600 font-normal text-sm';
 nameTh.textContent = '이름';
 hourRow.appendChild(nameTh.cloneNode(true));
 
 // 요일 + 날짜
 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
+weekDays.className = ' text-gray-600 font-normal text-sm';
 const today = new Date();
 const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
 
@@ -24,13 +25,15 @@ for (let i = 0; i < 7; i++) {
   date.setDate(startOfWeek.getDate() + i);
 
   const th = document.createElement('th');
-  th.className = 'border w-[calc((100%-24px)/7)] text-center cursor-pointer py-3';
+  th.className = 'border w-[calc((100%-24px)/7)] text-center cursor-pointer py-3 rounded-xl';
   th.innerHTML = `
-    <div>${weekDays[i]}</div>
-    <div class="relative">
-      <span class="date-num inline-block rounded-full w-6 h-6 leading-6">${date.getDate()}</span>
-    </div>
-  `;
+  <div class="flex flex-col items-center justify-center bg-white rounded-lg p-1">
+    <div class="text-gray-600 font-normal text-sm mb-3">${weekDays[i]}</div>
+      <span class="date-num inline-block rounded-full w-8 h-8 leading-6">${date.getDate()}</span>
+   
+  </div>
+`;
+
 
   th.addEventListener('click', () => {
     weekdayRow.querySelectorAll('.selected-day').forEach(el => el.classList.remove('selected-day'));
@@ -39,6 +42,13 @@ for (let i = 0; i < 7; i++) {
 
   weekdayRow.appendChild(th);
 }
+
+// 번호 칸 추가
+const indexTh = document.createElement('th');
+indexTh.className = 'border w-12 bg-[#f0f0f0] text-gray-600 font-normal text-sm';
+indexTh.textContent = '번호';
+hourRow.insertBefore(indexTh, hourRow.firstChild);
+
 
 // 시간 0~24
 for (let i = 0; i <= 24; i++) {
@@ -107,13 +117,11 @@ function renderCalendar(baseDate) {
 
 function highlightWeek(selectedDate) {
   const start = new Date(selectedDate);
-  start.setDate(selectedDate.getDate() - selectedDate.getDay());
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-
-  alert(`선택한 주: ${start.toLocaleDateString()} ~ ${end.toLocaleDateString()}`);
-  // 여기서 요일 줄, currentWeek 값 등 갱신 가능
+  start.setDate(selectedDate.getDate() - selectedDate.getDay() + 1);
+  currentWeekStart = start;
+  renderWeek(currentWeekStart);
 }
+
 
 // 외부 클릭 시 달력 팝업 닫기
 document.addEventListener('click', (e) => {
@@ -198,12 +206,19 @@ const drivers = [
 ];
 
 
-tbody.innerHTML = '';
+// 시간 막대바
 tbody.innerHTML = '';
 
-drivers.forEach(driver => {
+drivers.forEach((driver, index) => {
   const tr = document.createElement('tr');
 
+  // 번호 열 삽입
+  const tdIndex = document.createElement('td');
+  tdIndex.className = 'border text-center w-12 text-gray-600 font-normal text-sm';
+  tdIndex.textContent = (index + 1).toString();
+  tr.appendChild(tdIndex);
+
+  // 이름 열 생성 및 추가
   const tdName = document.createElement('td');
   tdName.className = 'border px-1 py-3 align-top justify-center w-24 relative items-center';
 
@@ -214,7 +229,7 @@ drivers.forEach(driver => {
   <div class="text-xs  mt-1 text-white bg-[#4a69e4] rounded-full w-12 py-1 text-center">${driver.workHour}h</div>
   </div>
   `;
-//text-center justify-center text-white text-xs font-normal font-['Spoqa_Han_Sans_Neo'] leading-none tracking-tight
+
   const popup = document.createElement('div');
   popup.className = 'absolute top-full left-0 mt-2 hidden w-72 h-40 bg-white text-black rounded-xl shadow-lg p-4 z-10';
   popup.innerHTML = `
@@ -251,7 +266,7 @@ drivers.forEach(driver => {
 
     if (i === driver.startHour) {
       const bar = document.createElement('div');
-      bar.className = 'absolute top-0 left-0 mt-4 py-3 bg-[#EEF1FF] flex justify-between items-center';
+      bar.className = 'absolute top-0 left-0 mt-5 py-2 bg-[#EEF1FF] flex justify-between items-center rounded-lg';
       bar.style.width = `${(driver.endHour - driver.startHour) * 100}%`;
       bar.innerHTML = `
         <span class="text-[#2D3F8A] px-2 text-xs">${driver.startHour}시</span>
@@ -268,6 +283,7 @@ drivers.forEach(driver => {
 });
 
 
+//사이드바 아이콘
 const menuData = [
   { icon: "../../../assets/attendanceManagement/schedule.png", label: "일정" },
   { icon: "../../../assets/attendanceManagement/notice.png", label: "공지사항" },
@@ -306,4 +322,110 @@ menuData.forEach(menu => {
 });
 
 
+
+
+//주별 이동 로직
+
+let currentWeekStart = new Date();
+currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+
+// 주 이동 함수
+function updateWeek(offset) {
+  currentWeekStart.setDate(currentWeekStart.getDate() + offset * 7);
+  renderWeek(currentWeekStart);
+}
+
+//랜더링 함수
+
+function renderWeek(startDate) {
+  const year = startDate.getFullYear();
+  const month = startDate.getMonth() + 1;
+  const weekOfMonth = Math.ceil((startDate.getDate() + startDate.getDay()) / 7);
+
+  document.getElementById("currentWeek").textContent = `${year}.${String(month).padStart(2, '0')}.${weekOfMonth}주`;
+
+  weekdayRow.innerHTML = '';
+
+  for (let i = 0; i < 7; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+
+      const th = document.createElement('th');
+      th.className = 'border w-[calc((100%-24px)/7)] text-center cursor-pointer py-3 rounded-xl';
+      th.innerHTML = `
+      <div class="flex flex-col items-center justify-center bg-white rounded-lg p-1">
+          <div class="text-gray-600 font-normal text-sm mb-3">${weekDays[i]}</div>
+          <span class="date-num inline-block rounded-full w-8 h-8 leading-6">${date.getDate()}</span>
+      </div>`;
+
+      th.addEventListener('click', () => {
+          weekdayRow.querySelectorAll('.selected-day').forEach(el => el.classList.remove('selected-day'));
+          th.classList.add('selected-day');
+      });
+
+      weekdayRow.appendChild(th);
+  }
+}
+
+document.getElementById('prevWeek').addEventListener('click', () => updateWeek(-1));
+document.getElementById('nextWeek').addEventListener('click', () => updateWeek(1));
+
+
+
+
+
+//드라이버 막대 랜더링
+function renderDriverBars(startDate, endDate) {
+  tbody.innerHTML = '';
+
+  // 주에 해당하는 드라이버만 필터링
+  const filteredDrivers = drivers.filter(driver => {
+      const workStart = new Date(driver.workStartDate);
+      const workEnd = new Date(driver.workEndDate);
+      return workEnd >= startDate && workStart <= endDate;
+  });
+
+  filteredDrivers.forEach((driver, index) => {
+      const tr = document.createElement('tr');
+
+      // 번호 열
+      const tdIndex = document.createElement('td');
+      tdIndex.className = 'border text-center w-12 text-gray-600 font-normal text-sm';
+      tdIndex.textContent = (index + 1).toString();
+      tr.appendChild(tdIndex);
+
+      // 이름 열
+      const tdName = document.createElement('td');
+      tdName.className = 'border px-1 py-3 align-top justify-center w-24 relative items-center';
+      tdName.innerHTML = `
+      <div class="flex flex-col justify-center items-center">
+          <div>${driver.name}</div>
+          <div class="text-xs text-gray-500">${driver.position}</div>
+          <div class="text-xs mt-1 text-white bg-[#4a69e4] rounded-full w-12 py-1 text-center">${driver.workHour}h</div>
+      </div>
+      `;
+      tr.appendChild(tdName);
+
+      for (let i = 0; i <= 24; i++) {
+          const td = document.createElement('td');
+          td.className = 'border p-0 relative h-0';
+
+          if (i === driver.startHour) {
+              const bar = document.createElement('div');
+              bar.className = 'absolute top-0 left-0 mt-5 py-2 bg-[#EEF1FF] flex justify-between items-center rounded-lg';
+              bar.style.width = `${(driver.endHour - driver.startHour) * 100}%`;
+              bar.innerHTML = `
+                  <span class="text-[#2D3F8A] px-2 text-xs">${driver.startHour}시</span>
+                  <span class="bg-white text-[#2D3F8A] rounded-xl px-2 w-20 h-7 flex justify-center items-center text-xs">${driver.workHour * 60}분</span>
+                  <span class="text-[#2D3F8A] px-2 text-xs">${driver.endHour}시</span>
+              `;
+              td.appendChild(bar);
+          }
+
+          tr.appendChild(td);
+      }
+
+      tbody.appendChild(tr);
+  });
+}
 

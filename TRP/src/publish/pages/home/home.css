@@ -62,8 +62,8 @@ th:hover .date-num {
 }
 
 .selected-day .date-num {
-  background-color: #4A69E4;
-  color: white;
+  background-color: #EEF1FF;
+  color: black;
 }
 
 .selected-day {

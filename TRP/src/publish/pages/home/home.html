@@ -37,7 +37,7 @@
       </div>
     </header>
     <div class="bg-white p-4 border-b flex justify-between items-center">
-      <div class="flex items-center gap-2 relative">
+      <div class="flex items-center gap-5 ml-5 relative">
         <button id="prevWeek" class="text-xl">&lt;</button>
         <button id="nextWeek" class="text-xl">&gt;</button>
         <span id="currentWeek" class="font-semibold text-xl text-[#1F2022]">2025.03.3주</span>
@@ -60,21 +60,21 @@
 
     <!-- 표 -->
     <section class="overflow-auto flex-1 p-2">
-      <div class="w-full">
-        <table id="weekdayTable" class="w-full table-fixed border-collapse mb-2">
-          <thead>
-            <tr id="weekdayRow"></tr>
-          </thead>
-        </table>
-      
-        <table id="scheduleTable" class="w-full table-fixed border-collapse">
-          <thead>
-            <tr id="hourRow"></tr>
-          </thead>
-          <tbody id="scheduleBody"></tbody>
-        </table>
-      </div>
-      
+      <div class="w-full max-w-[1470px] mx-auto">
+  <table id="weekdayTable" class="w-full table-fixed border-collapse mb-0">
+    <thead>
+      <tr id="weekdayRow"></tr>
+    </thead>
+  </table>
+
+  <table id="scheduleTable" class="w-full table-fixed border-collapse">
+    <thead>
+      <tr id="hourRow"></tr>
+    </thead>
+    <tbody id="scheduleBody"></tbody>
+  </table>
+</div>
+
     </section>
 
     <!-- 달력 팝업 -->
