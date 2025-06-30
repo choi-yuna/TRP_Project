@@ -4,8 +4,8 @@ const menuItems = [
       submenu: [
         { type: 'title', label: '홈' },
         { type: 'desc', label: '홈 페이지 (정책 대기중입니다.)' },
-        { type: 'button', label: '대시보드' },
-        { type: 'button', label: '통계' }
+        { type: 'button', label: '대시보드', url: '/dashboard.html' },
+        { type: 'button', label: '통계', url: '/home.html' }
       ]
     },
     { 
@@ -135,13 +135,13 @@ const menuItems = [
     // 토글 버튼
     const toggleBtn = document.createElement('button');
     toggleBtn.className = `
-      flex flex-col items-center text-center 
+      flex flex-col items-center text-center justify-center 
       w-[60px] h-[60px] rounded 
       hover:bg-gray-100
       ${selectedId === 'toggle' ? 'bg-[#EEF1FF] text-[#174AB3]' : 'text-gray-600'}
     `;
     toggleBtn.innerHTML = `
-      <img src="../../assets/icons/SNB.png" alt="메뉴" class="w-8 h-8 mb-1" />
+      <img src="../../assets/icons/SNB.png" alt="메뉴" class="w-10 h-10 mb-1 " />
     `;
     toggleBtn.addEventListener('click', toggleSidebarWidth);
     mainSidebar.appendChild(toggleBtn);
@@ -151,16 +151,17 @@ const menuItems = [
       const btn = document.createElement('button');
       btn.className = `
         flex flex-col items-center text-center justify-center
-        w-[60px] h-[60px] rounded 
+        w-[60px] h-[60px] rounded-xl 
         hover:bg-gray-100
         ${selectedId === item.id ? 'bg-[#EEF1FF] text-[#174AB3]' : 'text-gray-600'}
       `;
       btn.dataset.id = item.id;
   
       btn.innerHTML = `
-        <img src="${item.icon}" alt="${item.label}" class="w-6 h-6 mb-1" />
-        <span class="text-xs select-none">${item.label}</span>
-      `;
+      <img src="${item.icon}" alt="${item.label}" class="w-8 h-8 mb-1" />
+      <span class="text-lg select-none">${item.label}</span>
+    `;
+    
   
       btn.addEventListener('click', () => handleMainMenuClick(item.id));
       mainSidebar.appendChild(btn);
@@ -184,30 +185,35 @@ const menuItems = [
         let el;
         if (sub.type === 'title') {
           el = document.createElement('div');
-          el.className = 'font-bold text-lg mb-2';
+          el.className = 'font-bold text-2xl mb-2 p-3 mt-2';
           el.innerText = sub.label;
         } else if (sub.type === 'desc') {
           el = document.createElement('div');
-          el.className = 'text-xs text-gray-500 mb-2 mt-1 pb-2 border-b border-[#F1F1F1]';
+          el.className = 'text-xl text-gray-500 mb-2 mt-1 pb-2  p-3 border-b border-[#F1F1F1]';
           el.innerText = sub.label;
         } else if (sub.type === 'button') {
           el = document.createElement('button');
           el.className = `
             w-[180px] h-[36px] rounded 
-            flex items-center px-3 py-2 mb-2 text-left
-            hover:bg-gray-100 text-sm
+            flex items-center px-3 py-2 mb-2 text-left  p-3
+            hover:bg-gray-100 text-lg
             ${sub.selected ? 'bg-[#EEF1FF] text-[#174AB3]' : 'text-gray-700'}
           `;
           el.innerText = sub.label;
           el.addEventListener('click', () => {
+            if (sub.url) {
+              window.location.href = sub.url;
+              return;
+            }
+          
             pageTitle.innerText = sub.label;
             pageContent.innerText = `${sub.label} 페이지 내용입니다.`;
-    
-            // 서브 버튼 선택 상태 관리
+          
             selectedItem.submenu.forEach(s => s.selected = false);
             sub.selected = true;
             renderSubSidebar();
           });
+          
         }
         subSidebar.appendChild(el);
       });
@@ -231,8 +237,6 @@ function toggleSidebarWidth() {
 }
 
   
-  
-
   
   function handleMainMenuClick(id) {
     if (selectedId === id) return; // 같은 메뉴 중복 선택 방지

@@ -1,49 +1,62 @@
 <!DOCTYPE html>
 <html lang="ko">
+    
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GNB</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="./sidebar.js"></script>
+  <style>
+    html, body {
+      font-size: 62.5%;
+      height: 100%;
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 flex flex-col h-screen">
+
 
   <!-- GNB 탑바 -->
-  <header class="fixed top-0 left-0 right-0 bg-[#323542] h-[66px] flex items-center justify-between px-6 max-w-[1920px] w-full mx-auto z-50">
+  <header class="fixed top-0 left-0 right-0 bg-[#323542] h-[6.6rem] flex items-center gap-[80%] px-[2%] w-full">
+
     <!-- 좌측 로고 텍스트 -->
-    <div class="text-white text-lg font-bold">TRP</div>
+    <div class="text-white text-3xl font-bold">TRP</div>
 
     <!-- 우측 아이콘 버튼 + 사용자명 -->
-    <div class="flex items-center space-x-3 text-white">
-      <button class="p-2 hover:bg-gray-600 rounded">
-        <img src="../../assets/icons/notification.png" alt="알림" class="w-6 h-6" />
-      </button>
-      <button class="p-2 hover:bg-gray-600 rounded">
-        <img src="../../assets/icons/settings.png" alt="설정" class="w-6 h-6" />
-      </button>
-      <span class="ml-2 font-medium">김예나</span>
+    <div class="flex items-center justify-center gap-10 space-x-4 text-white">
+        <div>
+            <button class="p-3 hover:bg-gray-600 rounded">
+                <img src="../../assets/icons/notification.png" alt="알림" class="w-8 h-8" />
+              </button>
+              <button class="p-3 hover:bg-gray-600 rounded">
+                <img src="../../assets/icons/settings.png" alt="설정" class="w-8 h-8" />
+            </button>
+        </div>
+
+        <span class="text-xl">김예나</span>
     </div>
+      
   </header>
 
   <!-- 본문 영역 -->
-  <div class="pt-[66px] flex h-[calc(100vh-66px)]">
+  <div class="flex-1 mt-[66px] flex overflow-hidden">
+
     <!-- 왼쪽 메인 메뉴 바 -->
-    <aside id="main-sidebar" class="flex flex-col items-center bg-white w-20 border-r border-gray-200 py-4 space-y-4">
+    <aside id="main-sidebar" class="flex flex-col items-center bg-white w-[8rem] min-w-[8rem] h-full border-r border-gray-200 py-4 space-y-4">
       <!-- JS로 생성 -->
-      
     </aside>
     
 
     <!-- 오른쪽 서브 메뉴 바 -->
-    <aside id="sub-sidebar" class="w-64 bg-white border-r border-gray-200 p-4 overflow-auto hidden">
+    <aside id="sub-sidebar" class="w-[20rem] min-w-[20rem] h-full bg-white border-r border-gray-200 p-4 overflow-auto hidden">
       <!-- JS 서브메뉴 생성 -->
     </aside>
 
     <!-- 메인 콘텐츠 -->
     <main class="flex-1 p-6 overflow-auto">
-      <h1 id="page-title" class="text-2xl font-bold mb-4">선택된 메뉴가 없습니다.</h1>
-      <div id="page-content" class="text-gray-700">메뉴를 선택해주세요.</div>
+      <h1 id="page-title" class="text-3xl font-bold mb-5 m-3">선택된 메뉴가 없습니다.</h1>
+      <div id="page-content" class=" text-2xl text-gray-700 m-3">메뉴를 선택해주세요.</div>
     </main>
   </div>
 
