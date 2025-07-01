@@ -52,9 +52,18 @@
           <option>차량</option>
           <option>노선</option>
         </select>
-        <button id="btnToday" class="bg-[#474B5D] text-white px-3 py-2 rounded-xl text-sm">오늘</button>
-        <button class="bg-[#474B5D]  text-white px-3 py-2 rounded-xl text-sm">일별</button>
-        <button class="bg-[#4A69E4]  text-white px-3 py-2 rounded-xl text-sm ">주별</button>
+        <div id="tabButtons" class="flex bg-[#F5F7FC] rounded-[2rem] overflow-hidden p-[0.3rem] mt-4 ml-5 w-fit">
+          <button data-tab="오늘" class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem]">오늘</button>
+          <button data-tab="일별" class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem]">일별</button>
+          <button
+          data-tab="주별"
+          class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem] bg-[#2D2F3F] text-white shadow-lg"
+        >
+          주별
+        </button>
+        
+        </div>
+        
       </div>
     </div>
 

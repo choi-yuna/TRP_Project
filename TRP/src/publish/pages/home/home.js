@@ -118,10 +118,15 @@ function renderCalendar(baseDate) {
 function highlightWeek(selectedDate) {
   const start = new Date(selectedDate);
   start.setDate(selectedDate.getDate() - selectedDate.getDay() + 1);
-  currentWeekStart = start;
-  renderWeek(currentWeekStart);
-}
 
+  if (activeTab === "일별") {
+    currentDate = selectedDate;
+    renderDayView(currentDate);
+  } else {
+    currentWeekStart = start;
+    renderWeek(currentWeekStart);
+  }
+}
 
 // 외부 클릭 시 달력 팝업 닫기
 document.addEventListener('click', (e) => {
@@ -129,6 +134,13 @@ document.addEventListener('click', (e) => {
     calendarPopup.classList.add('hidden');
   }
 });
+
+
+//<, > 버튼 클릭 시 일별 이동 
+function updateDay(offset) {
+  currentDate.setDate(currentDate.getDate() + offset);
+  renderDayView(currentDate);
+}
 
 
 //운전원 데이터 팝업 (테스트 더미데이터)
@@ -428,4 +440,65 @@ function renderDriverBars(startDate, endDate) {
       tbody.appendChild(tr);
   });
 }
+
+// ✅ 버튼 요소를 지정한 후 사용해야 함
+const tab = document.querySelector(".tab-btn"); // 또는 btn, el 등
+if (tab) {
+  tab.classList.add("bg-[#2D2F3F]", "text-white", "shadow-lg");
+}
+
+
+let activeTab = "주별";
+
+// 탭 초기화
+document.addEventListener("DOMContentLoaded", () => {
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  activeTab = "주별"; // 초기 탭은 주별
+
+  tabButtons.forEach(btn => {
+    if (btn.dataset.tab === "주별") {
+      btn.classList.add("bg-[#2D2F3F]", "text-white", "shadow-lg");
+    } else {
+      btn.classList.remove("bg-[#2D2F3F]", "text-white", "shadow-lg");
+      btn.classList.add("text-[#999]");
+    }
+
+    btn.addEventListener("click", () => {
+      activeTab = btn.dataset.tab;
+      // 스타일 재설정
+      tabButtons.forEach(b => {
+        b.classList.remove("bg-[#2D2F3F]", "text-white", "shadow-lg");
+        b.classList.add("text-[#999]");
+      });
+      btn.classList.add("bg-[#2D2F3F]", "text-white", "shadow-lg");
+      btn.classList.remove("text-[#999]");
+
+      // 렌더 함수 실행
+      if (activeTab === "주별") renderWeek(currentWeekStart);
+      else if (activeTab === "일별") renderDayView(currentDate);
+      else if (activeTab === "오늘") renderDayView(new Date());
+    });
+  });
+});
+
+
+
+function renderDayView(date) {
+  weekdayRow.innerHTML = '';
+
+  const dayIndex = date.getDay();
+  const th = document.createElement('th');
+  th.className = 'border w-full text-center cursor-pointer py-3 rounded-xl';
+
+  th.innerHTML = `
+    <div class="flex flex-col items-center justify-center bg-white rounded-lg p-1">
+      <div class="text-gray-600 font-normal text-sm mb-3">${weekDays[dayIndex]}</div>
+      <span class="date-num inline-block rounded-full w-8 h-8 leading-6">${date.getDate()}</span>
+    </div>
+  `;
+  weekdayRow.appendChild(th);
+}
+
+
+let currentDate = new Date();
 

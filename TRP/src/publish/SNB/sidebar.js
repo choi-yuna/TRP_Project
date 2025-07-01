@@ -179,48 +179,71 @@ const menuItems = [
     const selectedItem = menuItems.find(i => i.id === selectedId);
     if (!selectedItem) return;
   
+    const currentPath = window.location.pathname;
+  
+    // 현재 경로와 일치하는 submenu 버튼에 selected 적용
+    selectedItem.submenu.forEach(sub => {
+      if (sub.type === 'button' && sub.url && sub.url === currentPath) {
+        sub.selected = true;
+      } else {
+        sub.selected = false;
+      }
+    });
+  
     subSidebar.classList.remove('hidden');
     subSidebar.innerHTML = '';
+  
     selectedItem.submenu.forEach((sub, index) => {
-        let el;
-        if (sub.type === 'title') {
-          el = document.createElement('div');
-          el.className = 'font-bold text-2xl mb-2 p-3 mt-2';
-          el.innerText = sub.label;
-        } else if (sub.type === 'desc') {
-          el = document.createElement('div');
-          el.className = 'text-xl text-gray-500 mb-2 mt-1 pb-2  p-3 border-b border-[#F1F1F1]';
-          el.innerText = sub.label;
-        } else if (sub.type === 'button') {
-          el = document.createElement('button');
-          el.className = `
-            w-[180px] h-[36px] rounded 
-            flex items-center px-3 py-2 mb-2 text-left  p-3
-            hover:bg-gray-100 text-lg
-            ${sub.selected ? 'bg-[#EEF1FF] text-[#174AB3]' : 'text-gray-700'}
-          `;
-          el.innerText = sub.label;
-          el.addEventListener('click', () => {
+      let el;
+      if (sub.type === 'title') {
+        el = document.createElement('div');
+        el.className = 'font-bold text-[#1f1f21] text-2xl mb-2 p-4 mt-2';
+        el.innerText = sub.label;
+      } else if (sub.type === 'desc') {
+        el = document.createElement('div');
+        el.className = 'text-xl text-gray-500 mb-2 mt-1 pb-2 p-3 border-b border-[#F1F1F1]';
+        el.innerText = sub.label;
+      } else if (sub.type === 'button') {
+        el = document.createElement('button');
+        el.className = `
+        w-[180px] h-[36px] rounded 
+        flex items-center px-6 py-4 mb-2 text-left p-3
+        hover:bg-gray-100 text-lg
+        ${sub.selected ? 'bg-[#EEF1FF] text-[#174AB3] font-bold' : 'text-gray-700'}
+      `;
+      
+        el.innerText = sub.label;
+        el.addEventListener('click', () => {
             if (sub.url) {
-              window.location.href = sub.url;
+              selectedItem.submenu.forEach(s => s.selected = false);
+              sub.selected = true;
+          
+              renderSubSidebar(); // UI 먼저 갱신
+              renderMainSidebar(); // 메인 사이드바도 다시 그려줘야 하이라이트 반영됨
+          
+              // 딜레이 후 페이지 이동 
+              setTimeout(() => {
+                window.location.href = sub.url;
+              }, 0);
+          
               return;
             }
           
-            pageTitle.innerText = sub.label;
-            pageContent.innerText = `${sub.label} 페이지 내용입니다.`;
-          
-            selectedItem.submenu.forEach(s => s.selected = false);
-            sub.selected = true;
-            renderSubSidebar();
-          });
-          
-        }
-        subSidebar.appendChild(el);
-      });
+          pageTitle.innerText = sub.label;
+          pageContent.innerText = `${sub.label} 페이지 내용입니다.`;
+  
+          selectedItem.submenu.forEach(s => s.selected = false);
+          sub.selected = true;
+          renderSubSidebar();
+        });
+      }
+      subSidebar.appendChild(el);
+    });
   
     pageTitle.innerText = selectedItem.label;
     pageContent.innerText = `${selectedItem.label} 페이지 입니다.`;
   }
+  
   
 
 function toggleSidebarWidth() {
@@ -245,7 +268,26 @@ function toggleSidebarWidth() {
     renderSubSidebar();
   }
   
-  // 초기 렌더링
+// 초기 URL 기준 selectedId 설정
+function initializeSelectedMenu() {
+    const currentPath = window.location.pathname;
+  
+    for (const menu of menuItems) {
+      for (const sub of menu.submenu) {
+        if (sub.type === 'button' && sub.url && sub.url === currentPath) {
+          selectedId = menu.id;
+          menu.submenu.forEach(s => s.selected = false); // 초기화
+          sub.selected = true; // 현재 버튼만 true
+          return;
+        }
+      }
+    }
+  }
+  
+  
+  
+  initializeSelectedMenu();
   renderMainSidebar();
   renderSubSidebar();
+  
   
