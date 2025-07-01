@@ -17,12 +17,14 @@ hourRow.appendChild(nameTh.cloneNode(true));
 // 요일 + 날짜
 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
 weekDays.className = ' text-gray-600 font-normal text-sm';
-const today = new Date();
-const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+let currentDate      = new Date();
+let currentWeekStart = new Date(currentDate);
+let activeTab        = '주별';
 
 for (let i = 0; i < 7; i++) {
-  const date = new Date(startOfWeek);
-  date.setDate(startOfWeek.getDate() + i);
+  const date = new Date(currentWeekStart);
+  date.setDate(currentWeekStart.getDate() + i);
+
 
   const th = document.createElement('th');
   th.className = 'border w-[calc((100%-24px)/7)] text-center cursor-pointer py-3 rounded-xl';
@@ -58,62 +60,6 @@ for (let i = 0; i <= 24; i++) {
   hourRow.appendChild(th);
 }
 
-//달력 팝업
-calendarPopup.id = 'calendarPopup';
-calendarPopup.className = 'absolute bg-white border rounded shadow-lg p-4 z-50 hidden';
-document.body.appendChild(calendarPopup);
-
-document.getElementById('calendarToggleBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  toggleCalendarPopup(e.target);
-});
-
-function toggleCalendarPopup(target) {
-  if (calendarPopup.classList.contains('hidden')) {
-    renderCalendar(new Date());
-    const rect = target.getBoundingClientRect();
-    calendarPopup.style.top = `${rect.bottom + window.scrollY}px`;
-    calendarPopup.style.left = `${rect.left + window.scrollX}px`;
-    calendarPopup.classList.remove('hidden');
-  } else {
-    calendarPopup.classList.add('hidden');
-  }
-}
-
-function renderCalendar(baseDate) {
-  calendarPopup.innerHTML = '';
-
-  const year = baseDate.getFullYear();
-  const month = baseDate.getMonth(); // 0-based
-
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  
-  let html = `<div class="font-bold mb-2">${year}.${month + 1}</div>`;
-  html += `<table class="text-xs"><thead><tr>`;
-  ['일','월','화','수','목','금','토'].forEach(d => html += `<th class="p-1">${d}</th>`);
-  html += `</tr></thead><tbody><tr>`;
-
-  let dayOfWeek = firstDay.getDay();
-  for (let i = 0; i < dayOfWeek; i++) html += `<td></td>`;
-
-  for (let d = 1; d <= lastDay.getDate(); d++) {
-    if ((dayOfWeek + d - 1) % 7 === 0 && d !== 1) html += `</tr><tr>`;
-    html += `<td class="p-1 cursor-pointer hover:bg-blue-100 rounded" data-date="${d}">${d}</td>`;
-  }
-
-  html += `</tr></tbody></table>`;
-  calendarPopup.innerHTML = html;
-
-  calendarPopup.querySelectorAll('td[data-date]').forEach(td => {
-    td.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const selectedDate = parseInt(td.dataset.date);
-      highlightWeek(new Date(year, month, selectedDate));
-      calendarPopup.classList.add('hidden');
-    });
-  });
-}
 
 function highlightWeek(selectedDate) {
   const start = new Date(selectedDate);
@@ -336,11 +282,6 @@ menuData.forEach(menu => {
 
 
 
-//주별 이동 로직
-
-let currentWeekStart = new Date();
-currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
-
 // 주 이동 함수
 function updateWeek(offset) {
   currentWeekStart.setDate(currentWeekStart.getDate() + offset * 7);
@@ -353,8 +294,7 @@ function renderWeek(startDate) {
   const year = startDate.getFullYear();
   const month = startDate.getMonth() + 1;
   const weekOfMonth = Math.ceil((startDate.getDate() + startDate.getDay()) / 7);
-
-  document.getElementById("currentWeek").textContent = `${year}.${String(month).padStart(2, '0')}.${weekOfMonth}주`;
+  document.getElementById("currentWeek").textContent = `${year}.${String(month).padStart(2,'0')}.${weekOfMonth}주`;
 
   weekdayRow.innerHTML = '';
 
@@ -379,8 +319,6 @@ function renderWeek(startDate) {
   }
 }
 
-document.getElementById('prevWeek').addEventListener('click', () => updateWeek(-1));
-document.getElementById('nextWeek').addEventListener('click', () => updateWeek(1));
 
 
 
@@ -448,7 +386,6 @@ if (tab) {
 }
 
 
-let activeTab = "주별";
 
 // 탭 초기화
 document.addEventListener("DOMContentLoaded", () => {
@@ -485,7 +422,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function renderDayView(date) {
   weekdayRow.innerHTML = '';
-
+  const Y = date.getFullYear();
+  const M = String(date.getMonth()+1).padStart(2,'0');
+  const D = String(date.getDate()).padStart(2,'0');
+document.getElementById("currentWeek").textContent = `${Y}.${M}.${D}`;
   const dayIndex = date.getDay();
   const th = document.createElement('th');
   th.className = 'border w-full text-center cursor-pointer py-3 rounded-xl';
@@ -499,6 +439,147 @@ function renderDayView(date) {
   weekdayRow.appendChild(th);
 }
 
+// 이전/다음 버튼
+document.getElementById('prevWeek').addEventListener('click', () => {
+   // 일별·오늘 탭 → 하루씩, 주별 탭 → 일주일씩
+  if (activeTab === '주별') updateWeek(-1);
+   else                       updateDay(-1);
+ });
+ document.getElementById('nextWeek').addEventListener('click', () => {
+   if (activeTab === '주별') updateWeek(1);
+   else                       updateDay(1);
+ });
 
-let currentDate = new Date();
+// 탭 클릭 처리 + 최초 렌더
+ document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeTab = btn.dataset.tab;
+        // 오늘 탭 → 오늘 날짜로, 일별 탭 → 현재 date, 주별 탭 → currentWeekStart
+        if (activeTab === '오늘') {
+          currentDate = new Date();
+          renderDayView(currentDate);
+        } else if (activeTab === '일별') {
+          renderDayView(currentDate);
+        } else {
+          renderWeek(currentWeekStart);
+        }
+      });
+    });
+
+
+
+    // 달력 전역 변수 선언
+const calendarDate = new Date();
+const popup       = document.getElementById('calendarPopup');
+const toggleBtn   = document.getElementById('calendarToggleBtn');
+
+// 이번 주 계산 & 표시
+function calcCurrentWeekStart() {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + 1);
+  return d;
+}
+
+function updateCurrentWeekDisplay(startDate) {
+  const Y = startDate.getFullYear();
+  const M = String(startDate.getMonth() + 1).padStart(2,'0');
+  const W = Math.ceil((startDate.getDate() + startDate.getDay()) / 7);
+  document.getElementById('currentWeek').textContent = `${Y}.${M}.${W}주`;
+}
+
+
+
+// 버튼 및 외부 클릭 이벤트
+toggleBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  if (popup.classList.contains('hidden')) {
+    renderCalendar(calendarDate);
+    const r = toggleBtn.getBoundingClientRect();
+    popup.style.top  = `${r.bottom + window.scrollY}px`;
+    popup.style.left = `${r.left   + window.scrollX}px`;
+    popup.classList.remove('hidden');
+  } else {
+    popup.classList.add('hidden');
+  }
+});
+
+document.getElementById('prevMonth')
+  .addEventListener('click', () => {
+    calendarDate.setMonth(calendarDate.getMonth() - 1);
+    renderCalendar(calendarDate);
+  });
+document.getElementById('nextMonth')
+  .addEventListener('click', () => {
+    calendarDate.setMonth(calendarDate.getMonth() + 1);
+    renderCalendar(calendarDate);
+  });
+document.addEventListener('click', e => {
+  if (!popup.contains(e.target) && !e.target.closest('#calendarToggleBtn')) {
+    popup.classList.add('hidden');
+  }
+});
+
+// 달력 그리는 함수
+function renderCalendar(baseDate) {
+  const Y = baseDate.getFullYear(), m = baseDate.getMonth();
+  document.getElementById('calendarHeader').textContent = `${Y}년 ${m+1}월`;
+
+  const firstDay = new Date(Y, m, 1).getDay();
+  const daysInM  = new Date(Y, m+1, 0).getDate();
+  const tbody    = document.getElementById('calendarBody');
+  tbody.innerHTML = '';
+
+  let row = document.createElement('tr');
+  for (let i = 0; i < firstDay; i++) row.appendChild(document.createElement('td'));
+
+  for (let d = 1; d <= daysInM; d++) {
+    const currentRow = row;
+    const td = document.createElement('td');
+    td.textContent = d;
+    td.className = 'cursor-pointer';
+    td.addEventListener('click', () => {
+      const picked = new Date(Y, m, d);
+      if (activeTab === '주별') {
+        // 주별 모드: 주 만 하이라이트, 팝업 유지
+        tbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected-week'));
+        currentRow.classList.add('selected-week');
+        const start = new Date(picked);
+        start.setDate(start.getDate() - start.getDay() + 1);
+        renderWeek(start);
+        updateCurrentWeekDisplay(start);
+      } else {
+        // 일별/오늘 모드: 셀 하나만 하이라이트, 팝업은 닫지 않음
+        tbody.querySelectorAll('td.selected-day')
+             .forEach(c => c.classList.remove('selected-day'));
+        td.classList.add('selected-day');
+        renderDayView(picked);
+      }
+    });
+    row.appendChild(td);
+    if ((firstDay + d) % 7 === 0) {
+      tbody.appendChild(row);
+      row = document.createElement('tr');
+    }
+  }
+  if (row.children.length) tbody.appendChild(row);
+}
+
+// 주/일 뷰 렌더 함수들(renderWeek, renderDayView, updateCurrentWeekDisplay)도
+// 이 위에 미리 정의해 두세요.
+
+
+// 기존에 계산해둔 이번 주 시작일
+currentWeekStart = calcCurrentWeekStart();
+
+// **요기 한 줄 추가**: 페이지 로드 직후 스팬에 값 채워주기
+updateCurrentWeekDisplay(currentWeekStart);
+
+
+
+
+
+
+
+
+
 

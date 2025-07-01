@@ -88,7 +88,7 @@ const menuItems = [
         { type: 'title', label: '인사' },
         { type: 'desc', label: '인사관리' },
         { type: 'button', label: '인당효율' },
-        { type: 'button', label: '근태관리' },
+        { type: 'button', label: '근태관리' , url : '/src/publish/pages/home/home.html'},
         { type: 'button', label: '직원등록' },
         { type: 'button', label: '면접자 관리' },
         { type: 'button', label: '조 관리' },

@@ -40,30 +40,25 @@
       <div class="flex items-center gap-5 ml-5 relative">
         <button id="prevWeek" class="text-xl">&lt;</button>
         <button id="nextWeek" class="text-xl">&gt;</button>
-        <span id="currentWeek" class="font-semibold text-xl text-[#1F2022]">2025.03.3주</span>
+        <span id="currentWeek" class="font-semibold text-xl text-[#1F2022]"></span>
         <button id="calendarToggleBtn" class="ml-2">
           <img src="../../../assets/attendanceManagement/calendar-icon.png" alt="달력 아이콘" class="w-5 h-5" />
         </button>
       </div>
       
-      <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center gap-3">
         <select class="border rounded p-2">
-          <option>승무원</option>
-          <option>차량</option>
-          <option>노선</option>
+          <option class="dropdown-btn" >승무원</option>
+          <option class="dropdown-btn">차량</option>
+          <option class="dropdown-btn">노선</option>
         </select>
-        <div id="tabButtons" class="flex bg-[#F5F7FC] rounded-[2rem] overflow-hidden p-[0.3rem] mt-4 ml-5 w-fit">
-          <button data-tab="오늘" class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem]">오늘</button>
-          <button data-tab="일별" class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem]">일별</button>
-          <button
-          data-tab="주별"
-          class="tab-btn text-[1.6rem] px-6 py-2 rounded-[2rem] bg-[#2D2F3F] text-white shadow-lg"
-        >
-          주별
-        </button>
-        
+        <div id="tabButtons" class="flex bg-[#ffffff] overflow-hidden justify-center items-center  ml-5">
+          <div class="tab-container  justify-center items-center">
+            <button class="tab-btn" data-tab="오늘">오늘</button>
+            <button class="tab-btn" data-tab="일별">일별</button>
+            <button class="tab-btn" data-tab="주별">주별</button>
+          </div>
         </div>
-        
       </div>
     </div>
 
@@ -86,8 +81,47 @@
 
     </section>
 
-    <!-- 달력 팝업 -->
-    <div id="calendarPopup" class="calendar-popup"></div>
+    <div
+    id="calendarPopup"
+    class="absolute top-full left-0 mt-2  w-80 h-50 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 hidden"
+  >
+    <!-- 헤더 -->
+    <div class="flex items-center justify-between mb-2 pb-2 border-b border-gray-200">
+      <button
+        id="prevMonth"
+        class="flex items-center px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition"
+      >
+        <span class="text-lg">&lt;</span>
+        <span class="ml-1 text-sm">지난달</span>
+      </button>
+      <span id="calendarHeader" class="text-lg font-semibold text-gray-800"></span>
+      <button
+        id="nextMonth"
+        class="flex items-center px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition"
+      >
+        <span class="mr-1 text-sm">다음달</span>
+        <span class="text-lg">&gt;</span>
+      </button>
+    </div>
+    <table class="w-full table-fixed text-center">
+      <thead>
+        <tr>
+          <th class="aspect-square py-2 text-red-500">일</th>
+          <th class="aspect-square py-2">월</th>
+          <th class="aspect-square py-2">화</th>
+          <th class="aspect-square py-2">수</th>
+          <th class="aspect-square py-2">목</th>
+          <th class="aspect-square py-2 text-blue-500">금</th>
+          <th class="aspect-square py-2 text-blue-500">토</th>
+        </tr>
+      </thead>
+      <tbody id="calendarBody">
+      </tbody>
+    </table>
+  </div>
+  
+
+    
   </main>
 
 </body>
