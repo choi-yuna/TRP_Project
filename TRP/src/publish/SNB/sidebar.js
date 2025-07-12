@@ -248,25 +248,29 @@ const menuItems = [
 
 function toggleSidebarWidth() {
   const isHidden = subSidebar.classList.contains('hidden');
-  
+
   if (isHidden) {
+    selectedId = 'home';
+    renderMainSidebar();
+    renderSubSidebar();
     subSidebar.classList.remove('hidden');
   } else {
     subSidebar.classList.add('hidden');
   }
-  
-  // 토글 클릭 시 홈으로 이동
-  handleMainMenuClick('home');
 }
 
   
   
-  function handleMainMenuClick(id) {
-    if (selectedId === id) return; // 같은 메뉴 중복 선택 방지
+function handleMainMenuClick(id) {
+  if (selectedId === id) {
+    // 이미 선택된 메뉴를 다시 클릭하면 접힘
+    selectedId = null;
+  } else {
     selectedId = id;
-    renderMainSidebar();
-    renderSubSidebar();
   }
+  renderMainSidebar();
+  renderSubSidebar();
+}
   
 // 초기 URL 기준 selectedId 설정
 function initializeSelectedMenu() {
