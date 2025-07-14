@@ -95,7 +95,7 @@ const menuItems = [
         { type: 'button', label: '인사위원회' },
         { type: 'button', label: '조직도' },
         { type: 'desc', label: '교육관리' },
-        { type: 'button', label: '교육 이수현황' },
+        { type: 'button', label: '교육 이수현황' , url: "../education/education.html"},
         { type: 'button', label: '일반 교육자료' },
         { type: 'button', label: '관리자 교육자료' },
     ] },
@@ -127,7 +127,8 @@ const menuItems = [
   const pageContent = document.getElementById('page-content');
   
   let selectedId = 'null';
-  
+  let lastSelectedId = null;  // 마지막으로 클릭된 메뉴
+
   //메인 사이드 바 함수
   function renderMainSidebar() {
     mainSidebar.innerHTML = '';
@@ -250,7 +251,7 @@ function toggleSidebarWidth() {
   const isHidden = subSidebar.classList.contains('hidden');
 
   if (isHidden) {
-    selectedId = 'home';
+    // selectedId = 'home';
     renderMainSidebar();
     renderSubSidebar();
     subSidebar.classList.remove('hidden');
@@ -263,22 +264,24 @@ function toggleSidebarWidth() {
   
 function handleMainMenuClick(id) {
   if (selectedId === id) {
-    // 이미 선택된 메뉴를 다시 클릭하면 접힘
     selectedId = null;
   } else {
     selectedId = id;
+    lastSelectedId = id;
   }
   renderMainSidebar();
   renderSubSidebar();
 }
+
   
 // 초기 URL 기준 selectedId 설정
 function initializeSelectedMenu() {
-    const currentPath = window.location.pathname;
-  
-    for (const menu of menuItems) {
-      for (const sub of menu.submenu) {
-        if (sub.type === 'button' && sub.url && sub.url === currentPath) {
+  const currentPath = window.location.pathname;
+  for (const menu of menuItems) {
+    for (const sub of menu.submenu) {
+      if (sub.type === 'button' && sub.url === currentPath) {
+        selectedId = menu.id;
+        lastSelectedId = menu.id;
           selectedId = menu.id;
           menu.submenu.forEach(s => s.selected = false); // 초기화
           sub.selected = true; // 현재 버튼만 true
