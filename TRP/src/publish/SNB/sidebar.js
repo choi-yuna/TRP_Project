@@ -96,7 +96,7 @@ const menuItems = [
         { type: 'button', label: '조직도' },
         { type: 'desc', label: '교육관리' },
         { type: 'button', label: '교육 이수현황' , url: "../education/education.html"},
-        { type: 'button', label: '일반 교육자료' },
+        { type: 'button', label: '일반 교육자료' ,url: "../educationMaterials/educationMaterials.html" },
         { type: 'button', label: '관리자 교육자료' },
     ] },
     { id: 'account', label: '회계', icon: '../../assets/icons/Accounting.png', submenu: [

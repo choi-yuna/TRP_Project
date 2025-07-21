@@ -8,7 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- 사이드바 렌더링 로직 -->
   <script defer src="../SNB/sidebar.js"></script>
-  <script type="module" defer src="./education.js"></script>
+  <script type="module"  src="./educationMaterials.js"></script>
+  <script type="module" src="./educationMaterialsPopup.js"></script>
   <style>
     html, body {
       height: 100%;
@@ -16,7 +17,7 @@
   </style>
 </head>
 <body class="bg-gray-50 flex flex-col h-screen">
-
+ㅋ
   <!-- GNB 탑바 (공통) -->
   <header class="fixed top-0 left-0 right-0 bg-[#323542] h-[6.6rem] flex items-center justify-between px-[2%]">
     <div class="text-white text-3xl font-bold">TRP</div>
@@ -35,19 +36,16 @@
     <!-- 메인 사이드바 (공통) -->
     <aside id="main-sidebar"
            class="flex flex-col items-center bg-white w-[84px] min-w-[84px] h-full border-r border-gray-200 py-4 space-y-4">
-      <!-- JS로 생성됩니다 -->
     </aside>
 
     <!-- 서브 사이드바 (공통) -->
     <aside id="sub-sidebar"
            class="w-[264px] min-w-[264px] h-full bg-white border-r border-gray-200 p-4 overflow-auto hidden">
-      <!-- JS로 생성됩니다 -->
     </aside>
 
     <!-- 메인 컨텐츠 영역 -->
     <main class="flex-1 p-6 overflow-auto">
- <!-- education.js 가 이 안에 모든 카드를 렌더링 -->
-          <div id="education-main" class="space-y-6"></div>
+        <div id="materials-page" class="p-6"></div>
   </div>
 
 </body>

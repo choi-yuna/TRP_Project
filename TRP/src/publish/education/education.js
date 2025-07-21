@@ -1,3 +1,5 @@
+import { showEducationDetailPopup } from './educationDetailPopup.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const main = document.getElementById('education-main');
     if (!main) return console.error('#education-main이 없습니다');
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1) 타이틀 + 검색바
     const header = document.createElement('div');
     header.className = 'flex justify-between items-center mb-8';
-    header.innerHTML = `<h1 class="text-3xl font-bold">교육 이수현황</h1>`;
+    header.innerHTML = `<h1 class="text-2xl font-bold">교육 이수현황</h1>`;
     header.appendChild(createSearchBar());
     container.appendChild(header);
   
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // 3) 표 제목
     const tableTitle = document.createElement('h2');
-    tableTitle.className = 'text-3xl font-semibold mb-4 mt-4';
+    tableTitle.className = 'text-2xl font-semibold mb-4 mt-4';
     tableTitle.innerText = '교육별 이수현황';
     container.appendChild(tableTitle);
   
@@ -52,7 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const tableEl = createStatusTable(pageItems);
       tableSection.appendChild(tableEl);
   
-      
+      pageItems.forEach((item, rowIndex) => {
+        const row = tableEl.querySelectorAll('tbody tr')[rowIndex];
+        const nameCell = row.querySelector('td:nth-child(4)');
+        nameCell.style.cursor = 'pointer';
+        nameCell.addEventListener('click', () => {
+          // item.no 를 넘겨서 상세데이터를 가져오고 팝업 띄우기
+          const detailData = fetchEducationDetail(item.no);
+          showEducationDetailPopup(detailData);
+        });
+      });
+
       tableEl.querySelectorAll('button.notify-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           showConfirmDialog(
@@ -573,4 +585,25 @@ function showConfirmDialog(title, message, onConfirm) {
   }
   
 
-
+function fetchEducationDetail(id) {
+  return {
+    id,
+    title: `교육과정 ${id} 상세`,
+    instructorName: '홍길동',
+    date: '2025.07.20',
+    description: '이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…이 교육은 성희롱 예방 등을 다루며…',
+    requiredDate: '2025.08.01',
+    attachments: [
+      { name: '자료.pdf', type: 'pdf', size: '2.3MB', url: '/files/1.pdf' },
+      { name: '슬라이드.pptx', type: 'pptx', size: '1.1MB', url: '/files/2.pptx' },
+    ],
+    stats: { total: 100, completed: 45, notCompleted: 34, late: 23 },
+    participants: Array.from({ length: 100 }, (_, i) => ({
+      name: `참여자 ${i+1}`,
+      status: ['completed','notCompleted','late'][i % 3],
+      statusText: ['이수','미이수','지연이수'][i % 3],
+      requiredDate: '2025.08.01',
+      actualDate: i % 3 === 0 ? '2025.07.30' : '',
+    }))
+  };
+}
