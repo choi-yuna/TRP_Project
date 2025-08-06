@@ -9,30 +9,39 @@ let materialsData = [
 ];
 const rowsPerPage = 10;
 let currentPage = 1;
-// — 검색 바
-function createSearchBar() {
-    const wrap = document.createElement('div');
-    wrap.className = 'flex items-center';
-    wrap.innerHTML = `\
-    <button id="edu-search-btn"
-    class="bg-white border border-l-0 rounded-r px-3 py-2 hover:bg-gray-100">
-    <img src="../../assets/icons/search.png" alt="검색" class="w-5 h-5" />
-    </button>
-      <input id="edu-search-input"
-             type="text"
-             placeholder="검색"
-             class="border rounded-l px-4 py-2 focus:outline-none" />
-    `;
-    return wrap;
-  }
+
   
   function initMaterialsPage() {
     const container = document.getElementById('materials-page');
+    container.classList.add('bg-white', 'min-h-screen', 'px-6', 'py-8');
     container.innerHTML = `
-      <div class="flex justify-between items-center mb-4">
+    <div class="w-full px-6 flex justify-between items-center mb-4">
         <h1 class="text-3xl font-semibold">일반 교육자료</h1>
-        <div id="materials-search-container"></div>
+        <div class="flex items-center justify-end space-x-4">
+    <!-- 검색창 -->
+    <div class="relative">
+      <input
+        type="text"
+        placeholder="검색"
+        class="h-10 pl-10 pr-12 rounded-full bg-gray-100 focus:outline-none"
+      />
+      <button class="absolute left-3 top-1/2 transform -translate-y-1/2">
+        <img src="../../assets/icons/search.png" alt="검색" class="w-5 h-5"/>
+      </button>
+    </div>
+    <!-- 업로드 버튼 -->
+    <button class="flex items-center space-x-1 bg-[#FFFFFF] text-[#323542] border-[#AAACB4] border-2 px-5 py-2 rounded-xl">
+      <span>엑셀 업로드</span>
+      <img src="../../assets/icons/upload.png" alt="엑셀 업로드" class="w-4 h-4"/>
+    </button>
+    <!-- 다운로드 버튼 -->
+    <button class="flex items-center space-x-1 bg-[#474B5D] text-white px-4 py-2 rounded-xl">
+      <span>엑셀 다운로드</span>
+      <img src="../../assets/icons/download2.png" alt="엑셀 다운로드" class="w-4 h-4"/>
+    </button>
+  </div>
       </div>
+      
       <hr class="border-gray-200 mb-4" />
       <div id="materials-table-container"></div>
       <div id="materials-pagination" class="flex justify-center mt-4"></div>
@@ -42,7 +51,6 @@ function createSearchBar() {
 
     document
       .getElementById('materials-search-container')
-      .appendChild(createSearchBar());
   
     renderMaterialsTable();
     renderPagination();

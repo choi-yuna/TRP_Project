@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.createElement('div');
     header.className = 'flex justify-between items-center mb-8';
     header.innerHTML = `<h1 class="text-2xl font-bold">교육 이수현황</h1>`;
-    header.appendChild(createSearchBar());
     container.appendChild(header);
   
     // 2) 카드 영역
@@ -24,17 +23,50 @@ document.addEventListener('DOMContentLoaded', () => {
     cardWrapper.appendChild(createRecentAlertsBlock());
     container.appendChild(cardWrapper);
   
-    // 3) 표 제목
-    const tableTitle = document.createElement('h2');
-    tableTitle.className = 'text-2xl font-semibold mb-4 mt-4';
-    tableTitle.innerText = '교육별 이수현황';
-    container.appendChild(tableTitle);
+// 3) 제목 + 검색바 + 엑셀 버튼 영역
+const titleBar = document.createElement('div');
+titleBar.className = 'flex justify-between items-center mb-4 mt-4';
+
+titleBar.innerHTML = `
+  <h2 class="text-2xl font-semibold">교육별 현황</h2>
+  <div class="flex items-center space-x-4">
+    <!-- 검색창 -->
+    <div class="relative">
+      <input
+        type="text"
+        placeholder="검색"
+        class="h-10 pl-10 pr-12 rounded-full bg-gray-100 focus:outline-none"
+      />
+      <button class="absolute left-3 top-1/2 transform -translate-y-1/2">
+        <img src="../../assets/icons/search.png" alt="검색" class="w-5 h-5"/>
+      </button>
+    </div>
+    <!-- 업로드 버튼 -->
+    <button class="flex items-center space-x-1 bg-[#FFFFFF] text-[#323542] border-[#AAACB4] border-2 px-5 py-2 rounded-xl">
+      <span>엑셀 업로드</span>
+      <img src="../../assets/icons/upload.png" alt="엑셀 업로드" class="w-4 h-4"/>
+    </button>
+    <!-- 다운로드 버튼 -->
+    <button class="flex items-center space-x-1 bg-[#474B5D] text-white px-4 py-2 rounded-xl">
+      <span>엑셀 다운로드</span>
+      <img src="../../assets/icons/download2.png" alt="엑셀 다운로드" class="w-4 h-4"/>
+    </button>
+  </div>
+`;
+
+
   
     // 4) 테이블 + 페이징 컨테이너
     const tableSection = document.createElement('div');
     const paginationSection = document.createElement('div');
-    container.appendChild(tableSection);
-    container.appendChild(paginationSection);
+
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'bg-white p-6 rounded-lg shadow-sm space-y-4';
+    contentWrapper.appendChild(titleBar);
+    contentWrapper.appendChild(tableSection);
+    contentWrapper.appendChild(paginationSection);
+
+container.appendChild(contentWrapper);
   
     // 5) 상태 + 데이터
     const tableData = generateDummyData(53);
@@ -85,22 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       paginationSection.appendChild(createPagination(totalPages, state.page));
     }
   
-    // 검색 이벤트
-    header.querySelector('#edu-search-input')
-      .addEventListener('keypress', e => {
-        if (e.key === 'Enter') {
-          state.filter = e.target.value.trim();
-          state.page = 1;
-          renderTable();
-        }
-      });
-    header.querySelector('#edu-search-btn')
-      .addEventListener('click', () => {
-        state.filter = header.querySelector('#edu-search-input').value.trim();
-        state.page = 1;
-        renderTable();
-      });
-  
+
     // 페이징 클릭 이벤트
     paginationSection.addEventListener('click', e => {
       if (e.target.dataset.page) {
@@ -125,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.createElement('div');
     header.className = 'flex justify-between items-center mb-4';
     header.innerHTML = `
-      <h2 class="text-2xl font-semibold">이수현황</h2>
+      <h2 class="text-2xl font-semibold mb-4">이수현황</h2>
       <div class="text-m text-gray-500 flex items-center mr-5">
         ${new Date().toLocaleString('ko-KR')} 기준
         <button class="ml-2 text-3xl mb-1 hover:text-gray-700">⟳</button>
@@ -139,8 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
     flexCharts.appendChild(createDonutChart({
       label: '기사',
       percentage: 50,
-      primaryColor: '#3B82F6',
-      secondaryColor: '#E0E7FF'
+      primaryColor: '#4A69E4',
+      secondaryColor: '#E0E7FF',
+      size: 185,
+      thickness: 23
     }));
     // 세로 구분선
     const separator = document.createElement('div');
@@ -149,8 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
     flexCharts.appendChild(createDonutChart({
       label: '관리자',
       percentage: 20,
-      primaryColor: '#22C55E',
-      secondaryColor: '#ECFDF3'
+      primaryColor: '#1CA04B',
+      secondaryColor: '#ECFDF3',
+      size: 185,
+      thickness: 23
     }));
   
     card.appendChild(flexCharts);
@@ -160,12 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 교육 분포도 카드 (320×340)
 function createDistributionBlock() {
-    const total = 34, admin = 12, agent = 8;
+  const total = 34, admin = 12, agent = 8;
   const adminPerc = Math.round((admin / total) * 100);
   const agentPerc = Math.round((agent / total) * 100);
 
   const card = document.createElement('div');
-  card.className = 'bg-white rounded-lg shadow p-6 flex flex-col h-[340px] flex-shrink-0';
+  card.className = 'bg-white rounded-lg shadow p-10 flex flex-col h-[340px] flex-shrink-0';
   card.style.flex = '320 1 0%';
 
   // 헤더
@@ -179,14 +200,16 @@ function createDistributionBlock() {
   top.className = 'flex items-center flex-1 mb-4';
   card.appendChild(top);
 
-  // primaryColor=#22C55E(관리자), secondaryColor=#3B82F6(기사)
+  // primaryColor=#1CA04B(관리자), secondaryColor=#4A69E4(기사)
   const donut = createDonutChart({
     label: '',
     percentage: adminPerc,
-    primaryColor: '#22C55E',
-    secondaryColor: '#3B82F6',
+    primaryColor: '#1CA04B',
+    secondaryColor: '#4A69E4',
     showLegend: false,
-    showLabel: false
+    showLabel: false,
+    size: 130,
+    thickness: 16
   });
   
   top.appendChild(donut);
@@ -195,9 +218,9 @@ function createDistributionBlock() {
   const info = document.createElement('div');
   info.className = 'flex flex-col items-start ml-10';
   info.innerHTML = `
-  <span class="font-bold text-gray-600 text-xl">전체</span>
+  <span class=" text-gray-500 text-lg">전체</span>
   <span class="font-bold text-black text-2xl">${total}개</span>
-    <span class="text-sm text-gray-500">(${(100).toFixed(1)}%)</span>
+    <span class="text-sm text-gray-400 mt-1">(${(100).toFixed(1)}%)</span>
   `;
   top.appendChild(info);
 
@@ -212,9 +235,9 @@ function createDistributionBlock() {
   adminRow.innerHTML = `
     <span class="flex items-center">
       <span class="w-3 h-3 bg-[#22C55E] rounded-sm inline-block mr-2"></span>
-      관리자 ${admin}개
+      관리자
     </span>
-    <span>(${adminPerc}%)</span>
+    <span> ${admin}개 (${adminPerc}%)</span>
   `;
   legend.appendChild(adminRow);
 
@@ -224,9 +247,9 @@ function createDistributionBlock() {
   agentRow.innerHTML = `
     <span class="flex items-center">
       <span class="w-3 h-3 bg-[#3B82F6] rounded-sm inline-block mr-2"></span>
-      기사 ${agent}개
+      기사
     </span>
-    <span>(${agentPerc}%)</span>
+    <span>${agent}개 (${agentPerc}%)</span>
   `;
   legend.appendChild(agentRow);
 
@@ -251,7 +274,7 @@ function createDistributionBlock() {
   
     // 헤더
     const header = document.createElement('h2');
-    header.className = 'text-xl font-semibold mb-7';
+    header.className = 'text-2xl font-semibold mb-4';
     header.innerText = '최근 알림 발송한 교육';
     card.appendChild(header);
   
@@ -289,195 +312,181 @@ function createDistributionBlock() {
     primaryColor = '#3B82F6',
     secondaryColor = '#E0E7FF',
     showLegend = true,
-    showLabel = true
+    showLabel = true,
+    size = 160,      // 차트 전체 지름(px)
+    thickness = 16   // 도넛 두께(px)
   }) {
-    const size = 140, thickness = 16;
+    const xmlns = 'http://www.w3.org/2000/svg';
+    const radius = (size - thickness) / 2;
+    const cx = size / 2;
+    const cy = size / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference * (1 - percentage / 100);
+  
+    // 1) SVG element
+    const svg = document.createElementNS(xmlns, 'svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+  
+    // 2) 배경 원(secondaryColor)
+    const bg = document.createElementNS(xmlns, 'circle');
+    bg.setAttribute('cx', cx);
+    bg.setAttribute('cy', cy);
+    bg.setAttribute('r', radius);
+    bg.setAttribute('fill', 'none');
+    bg.setAttribute('stroke', secondaryColor);
+    bg.setAttribute('stroke-width', thickness);
+    svg.appendChild(bg);
+  
+    // 3) 진행 원(primaryColor), stroke-linecap="round"
+    const fg = document.createElementNS(xmlns, 'circle');
+    fg.setAttribute('cx', cx);
+    fg.setAttribute('cy', cy);
+    fg.setAttribute('r', radius);
+    fg.setAttribute('fill', 'none');
+    fg.setAttribute('stroke', primaryColor);
+    fg.setAttribute('stroke-width', thickness);
+    fg.setAttribute('stroke-linecap', 'round');
+    fg.setAttribute('stroke-dasharray', circumference);
+    fg.setAttribute('stroke-dashoffset', offset);
+    // 북쪽(12시) 방향에서 시작하도록 270deg 회전
+    fg.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
+    svg.appendChild(fg);
+  
+    // 4) 컨테이너에 SVG와 텍스트 감싸기
     const container = document.createElement('div');
-    container.className = 'relative flex flex-col items-center';
+    container.className = 'relative flex flex-col items-center justify-center';
+    container.style.width  = `${size}px`;
+    container.style.height = `${size}px`;
   
-    // 1) 바깥 원(파이 차트)
-    const donut = document.createElement('div');
-    Object.assign(donut.style, {
-      width: `${size}px`,
-      height: `${size}px`,
-      borderRadius: '50%',
-      background: `conic-gradient(${primaryColor} ${percentage}%, ${secondaryColor} ${percentage}% 100%)`
-    });
-    container.appendChild(donut);
+    container.appendChild(svg);
   
-    // 2) 안쪽 원(홀) — 도넛 형태를 위해 항상 추가
-    const inner = document.createElement('div');
-    Object.assign(inner.style, {
-      width: `${size - thickness*2}px`,
-      height: `${size - thickness*2}px`,
-      borderRadius: '50%',
-      background: '#fff',
-      position: 'absolute',
-      top: `${thickness}px`,
-      left: `${thickness}px`
-    });
-    inner.className = 'flex flex-col items-center justify-center text-center';
-    // 텍스트는 옵션에 따라 추가
-    if (showLabel) {
-      inner.innerHTML = `
-        ${label ? `<span class="font-semibold">${label}</span>` : ''}
-        <span class="text-lg font-bold">${percentage}%</span>
-      `;
-    }
-    donut.appendChild(inner);
+    // 5) 내부 라벨 (작고 회색)
+if (showLabel && label) {
+  const lbl = document.createElement('div');
+  lbl.textContent = label;
+  Object.assign(lbl.style, {
+    position: 'absolute',
+    top: '35%',
+    left: '50%',
+    transform: 'translate(-50%, -80%)', // 라벨은 숫자보다 살짝 위
+    fontSize: '12px',
+    color: '#666'
+  });
+  container.appendChild(lbl);
+}
   
-    // 3) legend 옵션
+    // 6) 내부 퍼센트 (크고 primaryColor)
+    const pct = document.createElement('div');
+    pct.textContent = showLabel && label ?`${percentage}%` : "" ;
+    pct.style.position   = 'absolute';
+    pct.style.transform = 'translate(5%, -90%)';
+    pct.style.fontSize   = '16px';
+    pct.style.fontWeight = 'bold';
+    pct.style.color      = primaryColor;
+    pct.style.top        = showLabel && label ? '50%' : '45%';
+    container.appendChild(pct);
+  
+    // 7) 필요 시 legend 추가
     if (showLegend) {
       const legend = document.createElement('div');
-      legend.className = 'flex items-center mt-4 space-x-4 text-sm';
+      legend.className = 'flex items-center mt-7 space-x-2 text-sm';
       legend.innerHTML = `
         <span class="flex items-center">
-          <span class="w-3 h-3 bg-[${primaryColor}] rounded-sm inline-block mr-1"></span>이수
+          <span style="width:10px;height:10px;background:${primaryColor};display:inline-block;border-radius:2px;margin-right:4px;"></span>이수
         </span>
         <span class="flex items-center">
-          <span class="w-3 h-3 bg-[${secondaryColor}] rounded-sm inline-block mr-1"></span>미이수
+          <span style="width:10px;height:10px;background:${secondaryColor};display:inline-block;border-radius:2px;margin-right:4px;"></span>미이수
         </span>
       `;
       container.appendChild(legend);
     }
   
     return container;
+  }
+  
 
-    container.innerHTML = '';
   
-    // 상단: 타이틀 + 검색바
-    const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-8';
-    header.innerHTML = `<h1 class="text-3xl font-bold">교육 이수현황</h1>`;
-    header.appendChild(createSearchBar());
-    container.appendChild(header);
-  
-    // 카드 영역
-    const wrapper = document.createElement('div');
-    wrapper.className = 'flex flex-wrap gap-6 mb-8';
-    wrapper.appendChild(createCompletionBlock());
-    wrapper.appendChild(createDistributionBlock());
-    wrapper.appendChild(createRecentAlertsBlock());
-    container.appendChild(wrapper);
-  
-    // 데이터 + 상태 저장
-    const tableData = generateDummyData(53); // TODO:- 53개 더미 테스트데이터
-    const state = { filter: '', page: 1, pageSize: 10 };
-  
-    // 테이블 + 페이징 컨테이너
-    const tableSection = document.createElement('div');
-    const paginationSection = document.createElement('div');
-    container.appendChild(tableSection);
-    container.appendChild(paginationSection);
-  
-    // 렌더 함수
-    function renderTable() {
-      const filtered = tableData.filter(item =>
-        item.name.includes(state.filter)
-      );
-      const totalPages = Math.ceil(filtered.length / state.pageSize);
-      const start = (state.page - 1) * state.pageSize;
-      const pageItems = filtered.slice(start, start + state.pageSize);
-  
-      tableSection.innerHTML = '';
-      tableSection.appendChild(createStatusTable(pageItems));
-      paginationSection.innerHTML = '';
-      paginationSection.appendChild(createPagination(totalPages, state.page));
-    }
-  
-    // 검색/페이지 이벤트 바인딩
-    container.querySelector('#edu-search-input').addEventListener('keypress', e => {
-      if (e.key === 'Enter') {
-        state.filter = e.target.value.trim();
-        state.page = 1;
-        renderTable();
-      }
-    });
-    container.querySelector('#edu-search-btn').addEventListener('click', () => {
-      const val = container.querySelector('#edu-search-input').value.trim();
-      state.filter = val;
-      state.page = 1;
-      renderTable();
-    });
-  
-    // 페이지네이션 클릭
-    paginationSection.addEventListener('click', e => {
-      if (e.target.dataset.page) {
-        state.page = Number(e.target.dataset.page);
-        renderTable();
-      }
-    });
-  
-    renderTable();
-  }
-  
-  
-  // — 검색 바
-  function createSearchBar() {
-    const wrap = document.createElement('div');
-    wrap.className = 'flex items-center';
-    wrap.innerHTML = `
-      <input id="edu-search-input" 
-             type="text" 
-             placeholder="검색" 
-             class="border rounded-l px-4 py-2 focus:outline-none" />
-      <button id="edu-search-btn" 
-              class="bg-white border border-l-0 rounded-r px-3 py-2 hover:bg-gray-100">
-        🔍
-      </button>
-    `;
-    return wrap;
-  }
   
 // — 확인 다이얼로그
 function showConfirmDialog(title, message, onConfirm) {
-    const backdrop = document.createElement('div');
-    backdrop.className = 'fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50';
-  
-    const modal = document.createElement('div');
-    modal.className = 'bg-white rounded-xl shadow-lg p-6 w-[320px] h-[202px] text-center';
-    modal.innerHTML = `
-      <h3 class="text-2xl font-semibold mb-2 mt-10 m-2">${title}</h3>
-      <p class="text-xl text-gray-500 mb-6  m-2">${message}</p>
-      <div class="flex justify-center gap-4">
-        <button id="confirm-cancel" class="px-12 py-5 text-xl rounded-lg border hover:bg-gray-100">취소</button>
-        <button id="confirm-ok" class="px-12 py-5 text-xl rounded-lg bg-[var(--Primary-Normal,#4a69e4)] text-white">발송</button>
-      </div>
-    `;
-    backdrop.appendChild(modal);
-    document.body.appendChild(backdrop);
-  
-    modal.querySelector('#confirm-cancel').onclick = () => backdrop.remove();
-    modal.querySelector('#confirm-ok').onclick = () => {
-      backdrop.remove();
-      onConfirm();
-    };
-  }
-  
+  // 뒤쪽 어두운 배경
+  const backdrop = document.createElement('div');
+  backdrop.className = 'fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50';
+
+  // 모달 창
+  const modal = document.createElement('div');
+  modal.className = 'bg-white rounded-lg shadow-lg p-8 w-[500px]';
+  modal.innerHTML = `
+    <h3 class="text-2xl font-bold mb-6 text-center ">${title}</h3>
+    <p class="text-lg text-gray-800 mb-8 whitespace-pre-line text-center ">${message}</p>
+    <div class="flex justify-center gap-4">
+      <button id="confirm-cancel"
+              class="px-6 py-3 text-base rounded-md border border-gray-300 hover:bg-gray-100">
+        취소
+      </button>
+      <button id="confirm-ok"
+              class="px-6 py-3 text-base rounded-md bg-blue-600 text-white hover:bg-blue-700">
+        확인
+      </button>
+    </div>
+  `;
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+
+  // 이벤트 바인딩
+  modal.querySelector('#confirm-cancel').onclick = () => backdrop.remove();
+  modal.querySelector('#confirm-ok').onclick = () => {
+    backdrop.remove();
+    onConfirm();
+  };
+}
+
   // — 토스트 피드백
   function showToast(title, subtitle) {
+    // 토스트 컨테이너가 없으면 생성
     let container = document.getElementById('toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'toast-container';
-      container.className = 'fixed top-4 right-4 flex flex-col gap-2 z-50';
+      container.className = 'fixed top-4 right-4 flex flex-col gap-4 z-50';
       document.body.appendChild(container);
     }
+  
+    // 토스트 생성
     const toast = document.createElement('div');
-    toast.className = 'bg-gray-800 text-white rounded-lg px-10 py-5 w-[380px] h-[72px]  shadow';
+    toast.className = [
+      'bg-gray-800',
+      'text-white',
+      'rounded-lg',
+      'shadow-lg',
+      'w-[480px]',
+      'max-w-full',
+      'px-8',
+      'py-6',
+      'flex',
+      'flex-col',
+      'space-y-2',
+      'animate-slide-in'
+    ].join(' ');
+  
     toast.innerHTML = `
-    <div class="flex items-center mb-1">
-      <img src="../../assets/icons/toastCheck.png" alt="check icon" class="w-6 h-6 mr-3" />
-      <span class="font-semibold text-xl">${title}</span>
-    </div>
-    <div class="text-lg">${subtitle}</div>
-  `;
-
+      <div class="flex items-center space-x-4">
+        <img src="../../assets/icons/toastCheck.png" alt="check icon" class="w-6 h-6"/>
+        <span class="font-semibold text-xl">${title}</span>
+      </div>
+      <div class="text-lg pl-10">${subtitle}</div>
+    `;
+  
     container.appendChild(toast);
   
+    // 3초 후 제거
     setTimeout(() => {
       toast.remove();
-      if (container.childElementCount === 0) container.remove();
+      if (container.childElementCount === 0) {
+        container.remove();
+      }
     }, 3000);
   }
   
